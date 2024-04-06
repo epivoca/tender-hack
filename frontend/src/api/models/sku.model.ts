@@ -37,5 +37,11 @@ export namespace SkuDto {
     });
 
     export type Form = z.infer<typeof Form>;
+
+    export const PredictNameResponse = z.object({
+        names: z.array(z.string()),
+    });
+
+    export type PredictNameResponse = z.infer<typeof PredictNameResponse>;
 }
 

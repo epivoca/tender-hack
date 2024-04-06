@@ -1,4 +1,5 @@
 import { makeAutoObservable } from "mobx";
+import { redirect } from "react-router-dom";
 import { SkuEndpoint } from "api/endpoints/sku.endpoint.ts";
 import { SkuDto } from "api/models/sku.model.ts";
 import { debounce, debounceAsync } from "utils/debounce.ts";
@@ -46,20 +47,20 @@ export class CreateSkuFormViewModel {
     resetForm() {
         this.form = {
             image: "",
-            product_type: "Не выбрано",
+            product_type: "",
             name: "",
             model: "",
-            manufacturer: "Не выбрано",
+            manufacturer: "",
             measurement_unit: "",
             gost_classification: "",
-            country_of_origin: "Не выбрано",
+            country_of_origin: "",
             characteristics: []
         };
     }
 
     async submitForm() {
-        alert(JSON.stringify(this.form));
         const response = await SkuEndpoint.create(this.form);
+        redirect("/");
     }
 
     setImage = async (item: File) => {
@@ -86,19 +87,19 @@ export class CreateSkuFormViewModel {
     };
 
     #requestManufacturers = async () => {
-        this.manufacturers = ["ООО Стройкомплект", "ООО ЯрБетон", "ООО Потребительский кооператив", "Не выбрано"];
+        this.manufacturers = ["ООО Стройкомплект", "ООО ЯрБетон", "ООО Потребительский кооператив"];
     };
 
     #requestMeasurementUnits = async () => {
-        this.measurementUnits = ["шт", "кг", "л", "м", "м2", "м3", "Не выбрано"];
+        this.measurementUnits = ["шт", "кг", "л", "м", "м2", "м3"];
     };
 
     #requestCountriesOfOrigin = async () => {
-        this.countries_of_origin = ["Россия", "Китай", "Германия", "Не выбрано"];
+        this.countries_of_origin = ["Россия", "Китай", "Германия"];
     };
 
     #requestProductTypes = async () => {
-        this.productTypes = ["Строительные материалы", "Инструменты", "Оборудование", "Не выбрано"];
+        this.productTypes = ["Строительные материалы", "Инструменты", "Оборудование"];
     };
 
     #sendNameToBackendDebounced = debounce(300, async () => {
@@ -106,8 +107,14 @@ export class CreateSkuFormViewModel {
         await this.#sendNameToBackend();
     }); // Установите нужную задержку в миллисекундах
 
+    predictNames: string[] = [];
+
     #sendNameToBackend = async () => {
-        console.log("debounced");
+        if (!this.form.name.trim().length) {
+            this.predictNames = [];
+            return;
+        }
+        this.predictNames = await SkuEndpoint.predictNames(this.form.name.toLowerCase());
     };
 
 }
