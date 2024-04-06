@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Stack } from "components/stack.components.tsx";
 import { Text } from "components/text.component.tsx";
 import { PrimaryButton } from "components/ui/button.tsx";
-import { LabeledDropdown2 } from "components/ui/dropdown.tsx";
+import { CustomDropdown, DropdownWithSearch } from "components/ui/dropdown.tsx";
 import { CreateSkuFormViewModel } from "views/create-sku/create-sku.form.vm.ts";
 
 export const SkuForm = observer(() => {
@@ -21,17 +21,20 @@ export const SkuForm = observer(() => {
                              id={"image"}
                              isRequired={vm.isFieldRequired("image")} />
 
-                <LabeledInput label={"Наименование"}
-                              onChange={v => vm.onNameChange(v)}
-                              value={vm.form.name}
-                              id={"name"}
-                              isRequired={vm.isFieldRequired("name")} />
-                <LabeledDropdown label={"Категория"} onChange={v => vm.form.product_type = v} value={vm.form.product_type} isRequired={true} options={vm.productTypes} />
+                <DropdownWithSearch label={"Наименование"}
+                                    onChange={v => vm.onNameChange(v)}
+                                    id={"name"}
+                                    searchValue={vm.form.name}
+                                    onSearchChange={v => vm.onNameChange(v)}
+                                    options={vm.predictNames}
+                                    isRequired={vm.isFieldRequired("name")}
+                                    searchPlaceholder={"Поиск наименования"} />
+                <CustomDropdown label={"Категория"} onChange={v => vm.form.product_type = v} value={vm.form.product_type} isRequired={true} options={vm.productTypes} />
                 <LabeledInput label={"Модель"} onChange={v => vm.form.model = v} value={vm.form.model} isRequired={true} />
-                <LabeledDropdown label={"Производитель"} onChange={v => vm.form.manufacturer = v} value={vm.form.manufacturer} isRequired={true} options={vm.manufacturers} />
-                <LabeledDropdown label={"Единица измерения"} onChange={v => vm.form.measurement_unit = v} value={vm.form.measurement_unit} isRequired={true} options={vm.measurementUnits} />
+                <CustomDropdown label={"Производитель"} onChange={v => vm.form.manufacturer = v} value={vm.form.manufacturer} isRequired={true} options={vm.manufacturers} />
+                <CustomDropdown label={"Единица измерения"} onChange={v => vm.form.measurement_unit = v} value={vm.form.measurement_unit} isRequired={true} options={vm.measurementUnits} />
                 <LabeledInput label={"Классификация ГОСТ/ТУ"} onChange={v => vm.form.gost_classification = v} value={vm.form.gost_classification} isRequired={false} />
-                <LabeledDropdown label={"Страна происхождения"} onChange={v => vm.form.country_of_origin = v} value={vm.form.country_of_origin} isRequired={true} options={vm.countries_of_origin} />
+                <CustomDropdown label={"Страна происхождения"} onChange={v => vm.form.country_of_origin = v} value={vm.form.country_of_origin} isRequired={true} options={vm.countries_of_origin} />
                 <CharachteristicsHeader>ХАРАКТЕРИСТИКИ</CharachteristicsHeader>
                 <Stack direction="row" gap={24} justify={"end"}>
                     <PrimaryButton onClick={onSubmit} type="button">

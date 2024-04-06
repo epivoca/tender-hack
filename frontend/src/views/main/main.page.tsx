@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { SkuDto } from "api/models/sku.model.ts";
+import { Loader } from "components/loader.component.tsx";
 import { Stack } from "components/stack.components.tsx";
 import { Text } from "components/text.component.tsx";
 import { PrimaryButton } from "components/ui/button.tsx";
@@ -20,21 +21,30 @@ export const MainPage = observer(() => {
         <MainContainer>
             <Content>
                 <MainContent>
-                    <Stack align={"center"} justify={"space-between"} gap={24} wFull>
-                        <Text size={24} weight={700}>Каталог товаров</Text>
-                        <PrimaryButton onClick={() => navigate("/sku-change-request/new")}>
-                            Добавить СТЕ</PrimaryButton>
-                    </Stack>
-                    <SteGrid>
-                        { vm.skuList.map(x => (
-                            <SteItemCard key={x._id} {...x} />
-                        )) }
-                    </SteGrid>
                     {
-                        vm.skuList.length === 0 && (
-                            <Stack align={"center"} justify={"center"} gap={24} wFull hFull style={{ marginTop: "100px" }}>
-                                <Text opacity={0.4} size={16} weight={500}>СТЕ отсутствуют! Станьте первым!</Text>
+                        vm.isLoading ? (
+                            <Stack align={"center"} justify={"center"} gap={24} wFull hFull>
+                                <Loader />
                             </Stack>
+                        ) : (
+                            <>
+                                <Stack align={"center"} justify={"space-between"} gap={24} wFull>
+                                    <Text size={24} weight={700}>Каталог товаров</Text>
+                                    <PrimaryButton onClick={() => navigate("/sku-change-request/new")}>
+                                        Добавить СТЕ</PrimaryButton>
+                                </Stack><SteGrid>
+                                    { vm.skuList.map(x => (
+                                        <SteItemCard key={x._id} {...x} />
+                                    )) }
+                                </SteGrid>
+                                {
+                                    vm.skuList.length === 0 && !vm.isLoading && (
+                                        <Stack align={"center"} justify={"center"} gap={24} wFull hFull style={{ marginTop: "100px" }}>
+                                            <Text opacity={0.4} size={16} weight={500}>СТЕ отсутствуют! Станьте первым!</Text>
+                                        </Stack>
+                                    )
+                                }
+                            </>
                         )
                     }
                 </MainContent>

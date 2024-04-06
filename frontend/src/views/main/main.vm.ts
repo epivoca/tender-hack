@@ -140,40 +140,6 @@ const mockSkuItems: SkuDto.Item[] = [
             },
         ],
     },
-    {
-        _id: "4",
-        image: "https://example.com/image.jpg",
-        product_type: "product_type",
-        name: "name 3",
-        model: "model",
-        manufacturer: "manufacturer",
-        measurement_unit: "measurement_unit",
-        country_of_origin: "country_of_origin",
-        characteristics: [
-            {
-                name: "name",
-                value: "value",
-                unit: "unit",
-            },
-        ],
-    },
-    {
-        _id: "5",
-        image: "https://example.com/image.jpg",
-        product_type: "product_type",
-        name: "name 2",
-        model: "model",
-        manufacturer: "manufacturer",
-        measurement_unit: "measurement_unit",
-        country_of_origin: "country_of_origin",
-        characteristics: [
-            {
-                name: "name",
-                value: "value",
-                unit: "unit",
-            },
-        ],
-    }
 ];
 
 import { makeAutoObservable } from "mobx";
@@ -192,6 +158,6 @@ export class MainPageViewModel {
 
     #getSkuList = async () => {
         const res = await SkuEndpoint.findList();
-        this.skuList = [...mockSkuItems, ...res];
+        this.skuList = res;
     };
 }
