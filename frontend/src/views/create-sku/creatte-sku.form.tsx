@@ -26,20 +26,12 @@ export const SkuForm = observer(() => {
                               value={vm.form.name}
                               id={"name"}
                               isRequired={vm.isFieldRequired("name")} />
-
-                <LabeledInput label={"Штрихкод"}
-                              onChange={v => vm.form.measurement_unit = v}
-                              value={vm.form.measurement_unit}
-                              id={"measurement_unit"}
-                              isRequired={vm.isFieldRequired("measurement_unit")} />
-                ß
+                <LabeledDropdown label={"Категория"} onChange={v => vm.form.product_type = v} value={vm.form.product_type} isRequired={true} options={vm.productTypes} />
                 <LabeledInput label={"Модель"} onChange={v => vm.form.model = v} value={vm.form.model} isRequired={true} />
                 <LabeledDropdown label={"Производитель"} onChange={v => vm.form.manufacturer = v} value={vm.form.manufacturer} isRequired={true} options={vm.manufacturers} />
-                <LabeledInput label={"Каталожный номер производителя"} onChange={v => vm.form.gost_classification = v} value={vm.form.gost_classification} isRequired={false} />
                 <LabeledDropdown label={"Единица измерения"} onChange={v => vm.form.measurement_unit = v} value={vm.form.measurement_unit} isRequired={true} options={vm.measurementUnits} />
                 <LabeledInput label={"Классификация ГОСТ/ТУ"} onChange={v => vm.form.gost_classification = v} value={vm.form.gost_classification} isRequired={false} />
                 <LabeledDropdown label={"Страна происхождения"} onChange={v => vm.form.country_of_origin = v} value={vm.form.country_of_origin} isRequired={true} options={vm.countries_of_origin} />
-                <LabeledDropdown label={"Категория"} onChange={v => vm.form.product_type = v} value={vm.form.product_type} isRequired={true} options={vm.productTypes} />
                 <CharachteristicsHeader>ХАРАКТЕРИСТИКИ</CharachteristicsHeader>
                 <Stack direction="row" gap={24} justify={"end"}>
                     <PrimaryButton onClick={onSubmit} type="button">

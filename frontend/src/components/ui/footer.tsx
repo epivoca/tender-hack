@@ -25,7 +25,8 @@ const FooterContainer = styled.footer`
     bottom: 0;
     left: 0;
     z-index: 1000;
-    background-color: #F6F8FC;
+    background-color: #F6F8FC; 
+    border-top: 1px solid #E5E5E5;
 `;
 
 const FooterContent = styled.div`

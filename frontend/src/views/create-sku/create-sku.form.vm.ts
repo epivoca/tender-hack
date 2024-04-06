@@ -20,7 +20,7 @@ export class CreateSkuFormViewModel {
         this.isLoading = false;
     };
 
-    public form: SkuDto.SkuForm = {
+    public form: SkuDto.Form = {
         image: "",
         product_type: "Не выбрано",
         name: "",
