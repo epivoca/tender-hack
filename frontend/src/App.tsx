@@ -20,7 +20,7 @@ const App = observer(() => {
         });
     }, [location.pathname]);
 
-    const exampleform = SkuDto.SkuForm.parse({
+    const exampleform = SkuDto.Form.parse({
         image: "https://example.com/image.jpg",
         product_type: "product_type",
         name: "name",
@@ -40,13 +40,13 @@ const App = observer(() => {
     return (
         <div>
             <Header />
-            <div style={{ minHeight: "calc(100vh - 76px)", paddingTop: "72px" }}>
+            <main style={{ minHeight: "calc(100vh - 76px)", paddingTop: "72px", display: "flex", flexDirection: "column" }}>
                 <Routes location={location}>
                     <Route path="/" element={<MainPage />} />
                     <Route path="/sku/view/:id" element={<div>SKU</div>} />
                     <Route path="/sku-change-request/new" element={<CreateSkuPage />} />
                 </Routes>
-            </div>
+            </main>
             <Footer />
         </div>
     );

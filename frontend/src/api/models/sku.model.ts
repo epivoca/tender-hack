@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export namespace SkuDto {
-    export const SkuItem = z.object({
+    export const Item = z.object({
         _id: z.string(),
         image: z.string(),
         product_type: z.string(),
@@ -18,9 +18,9 @@ export namespace SkuDto {
         })),
     });
 
-    export type SkuItem = z.infer<typeof SkuItem>;
+    export type Item = z.infer<typeof Item>;
 
-    export const SkuForm = z.object({
+    export const Form = z.object({
         image: z.string(),
         product_type: z.string(),
         name: z.string(),
@@ -36,6 +36,6 @@ export namespace SkuDto {
         })),
     });
 
-    export type SkuForm = z.infer<typeof SkuForm>;
+    export type Form = z.infer<typeof Form>;
 }
 
