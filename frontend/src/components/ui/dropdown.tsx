@@ -62,7 +62,7 @@ export const CustomDropdown = observer<LabeledDropdownProps>(x => {
     const selectedOption = x.options.find(option => option === x.value);
     const colapsebleRef = useCollapsible(isOpen);
     const ref = React.useRef<HTMLDivElement>(null);
-    useKeydown("Escape", () => setIsOpen(false), undefined, [isOpen]);
+    useKeydown("Enter", () => setIsOpen(false), undefined, [isOpen]);
     useOnClickOutside([ref], () => setIsOpen(false));
     const handleSelect = (option: string) => {
         x.onChange(option);
@@ -78,8 +78,8 @@ export const CustomDropdown = observer<LabeledDropdownProps>(x => {
             { isOpen && (
                 <Stack direction="column" gap={4} style={{ display: "contents", height: "100px", overflow: "auto" }}>
                     <OptionsList ref={colapsebleRef}>
-                        { x.options.map(option => (
-                            <Option key={option} onClick={() => handleSelect(option)} aria-selected={option === selectedOption} aria-disabled={x.disabledOptions?.includes(option)}>
+                        { x.options.map((option, index) => (
+                            <Option key={option} onClick={() => handleSelect(option)} aria-selected={option === selectedOption} aria-disabled={x.disabledOptions?.includes(option)} tabIndex={index}>
                                 { option }
                             </Option>
                         )) }
@@ -118,11 +118,13 @@ const Input = styled.input`
 export const DropdownWithSearch = observer((x: DropdownWithSearchProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const selectedOption = x.options.find(option => option === x.value);
+    //remove selected options from the list
+    const abilityOptions = x.options.filter(option => option !== x.value);
     const colapsebleRef = useCollapsible(isOpen);
     const ref = React.useRef<HTMLDivElement>(null);
     useKeydown("Escape", () => setIsOpen(false), undefined, [isOpen]);
 
-    useKeydown("Tab", () => {
+    useKeydown("Enter", () => {
         if (isOpen && x.options.length > 0) {
             x.onChange(x.options[0]);
         }
@@ -151,7 +153,7 @@ export const DropdownWithSearch = observer((x: DropdownWithSearchProps) => {
             <Input placeholder={x.searchPlaceholder} value={x.searchValue} onChange={onInputChanged} />
             { isOpen && Boolean(x.options.length) && (
                 <OptionsList>
-                    { x.options.map(option => (
+                    { abilityOptions.map(option => (
                         <Option key={option} onClick={e => handleSelect(option, e)} aria-selected={option === selectedOption} aria-disabled={x.disabledOptions?.includes(option)}>
                             { option }
                         </Option>

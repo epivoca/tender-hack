@@ -26,7 +26,7 @@ const Header = observer(() => {
                                 <VerticalDivider />
                                 <Stack justify={"center"} gap={24}>
                                     <Stack direction={"column"} justify={"center"}>
-                                        <Text weight={600} font-size={14}>Лежнев Алеександр</Text>
+                                        <Text weight={600} font-size={14}>Лежнев Александр</Text>
                                         <Text size={12} color={"#9B9B9B"}>Поставщик</Text>
                                     </Stack>
                                     <Svg src={userIcon} fill={"#264b82"} width={48} height={48} />
@@ -53,7 +53,7 @@ const HeaderContainer = styled.header`
     position: absolute;
     display: flex;
     justify-content: start  ;
-    align-items: center;
+    align-items: center;    
     top: 0;
     left: 0;
     z-index: 1000;

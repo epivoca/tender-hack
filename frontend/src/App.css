@@ -2,3 +2,23 @@
   width: 100%;
     min-height: 100vh;
 }
+
+/*//unsile button*/
+
+
+button {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+
+  :active {
+    transform: scale(0.95);
+  }
+
+  :hover {
+    transform: scale(1.05);
+  }
+
+  transition: all 0.3s ease;
+}

@@ -1,6 +1,15 @@
 import { z } from "zod";
 
 export namespace SkuDto {
+
+    export const Characteristic = z.object({
+        name: z.string(),
+        value: z.string(),
+        unit: z.string(),
+    });
+
+    export type Characteristic = z.infer<typeof Characteristic>;
+
     export const Item = z.object({
         _id: z.string(),
         image: z.string(),
@@ -11,11 +20,7 @@ export namespace SkuDto {
         measurement_unit: z.string(),
         gost_classification: z.string().optional(),
         country_of_origin: z.string(),
-        characteristics: z.array(z.object({
-            name: z.string(),
-            value: z.string(),
-            unit: z.string(),
-        })),
+        characteristics: z.array(Characteristic),
     });
 
     export type Item = z.infer<typeof Item>;

@@ -2,7 +2,7 @@ import { makeAutoObservable } from "mobx";
 import { redirect } from "react-router-dom";
 import { SkuEndpoint } from "api/endpoints/sku.endpoint.ts";
 import { SkuDto } from "api/models/sku.model.ts";
-import { debounce, debounceAsync } from "utils/debounce.ts";
+import { debounce } from "utils/debounce.ts";
 
 export class CreateSkuFormViewModel {
     constructor() {
