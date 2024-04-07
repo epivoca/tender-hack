@@ -48,5 +48,15 @@ export namespace SkuDto {
     });
 
     export type PredictNameResponse = z.infer<typeof PredictNameResponse>;
+
+    export const PredictedSkuData = z.object({
+        categories: z.array(z.object({
+            category_name: z.string(), // (string)
+            model: z.string(), // (string)
+            manufacturer: z.string(), // (string)
+        })),
+    });
+
+    export type PredictedSkuData = z.infer<typeof PredictedSkuData>;
 }
 

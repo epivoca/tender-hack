@@ -2,54 +2,61 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
+import { redirect, useNavigate } from "react-router-dom";
 import { SkuDto } from "api/models/sku.model.ts";
 import { Stack } from "components/stack.components.tsx";
 import { Text } from "components/text.component.tsx";
 import { CancelButton, GreyButton, PrimaryButton } from "components/ui/button.tsx";
 import { CustomDropdown, DropdownWithSearch } from "components/ui/dropdown.tsx";
 import { Segment } from "components/ui/segment";
+import { Warncontainer } from "components/warn.components.tsx";
 import { CreateSkuFormViewModel } from "views/create-sku/create-sku.form.vm.ts";
 
 export const SkuForm = observer(() => {
     const [vm] = useState(() => new CreateSkuFormViewModel());
+    const navigator = useNavigate();
 
     const onSubmit = () => {
         void vm.submitForm();
+        navigator("/");
     };
     return (
-        <form style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", gap: "24px" }}>
-            <Segment>
-                <Stack direction="column" gap={24}>
-                    <DragAndDrop label={"Изображения"}
-                                 onChange={v => vm.setImage(v)}
-                                 id={"image"}
-                                 isRequired={vm.isFieldRequired("image")} />
+        <Stack direction="column" gap={24}>
+            <form style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", gap: "24px" }}>
+                <Segment>
+                    <Stack direction="column" gap={24}>
+                        <Text size={24} weight={700}>Создание нового СТЕ</Text>
+                        <DragAndDrop label={"Изображения"}
+                                     onChange={v => vm.setImage(v)}
+                                     id={"image"}
+                                     isRequired={vm.isFieldRequired("image")} />
 
-                    <DropdownWithSearch label={"Наименование"}
-                                        onChange={v => vm.onNameChange(v)}
-                                        id={"name"}
-                                        searchValue={vm.form.name}
-                                        onSearchChange={v => vm.onNameChange(v)}
-                                        options={vm.predictNames}
-                                        isRequired={vm.isFieldRequired("name")}
-                                        searchPlaceholder={"Введите наименование"} />
-                    <CustomDropdown label={"Категория"} onChange={v => vm.form.product_type = v} value={vm.form.product_type} isRequired={true} options={vm.productTypes} />
-                    <LabeledInput label={"Модель"} onChange={v => vm.form.model = v} value={vm.form.model} isRequired={true} />
-                    <CustomDropdown label={"Производитель"} onChange={v => vm.form.manufacturer = v} value={vm.form.manufacturer} isRequired={true} options={vm.manufacturers} />
-                    <CustomDropdown label={"Единица измерения"} onChange={v => vm.form.measurement_unit = v} value={vm.form.measurement_unit} isRequired={true} options={vm.measurementUnits} />
-                    <LabeledInput label={"Классификация ГОСТ/ТУ"} onChange={v => vm.form.gost_classification = v} value={vm.form.gost_classification} isRequired={false} />
-                    <CustomDropdown label={"Страна происхождения"} onChange={v => vm.form.country_of_origin = v} value={vm.form.country_of_origin} isRequired={true} options={vm.countries_of_origin} />
-                    <CharachteristicsHeader>ХАРАКТЕРИСТИКИ</CharachteristicsHeader>
-                    <Charachteristics />
-                </Stack>
-            </Segment>
-            <Segment>
-                <Stack direction="row" gap={24} justify={"end"}>
-                    <PrimaryButton onClick={onSubmit} type="button">
-                        Проверить и отправить заявку на СТЕ</PrimaryButton>
-                </Stack>
-            </Segment>
-        </form>
+                        <DropdownWithSearch label={"Наименование"}
+                                            onChange={v => vm.onNameChange(v)}
+                                            id={"name"}
+                                            searchValue={vm.form.name}
+                                            onSearchChange={v => vm.onNameChange(v)}
+                                            options={vm.predictNames}
+                                            isRequired={vm.isFieldRequired("name")}
+                                            searchPlaceholder={"Введите наименование"} />
+                        <DropdownWithSearch label={"Категория"} onChange={v => vm.form.product_type = v} value={vm.form.product_type} isRequired={true} options={vm.getCategoryPredictions()} searchValue={vm.form.product_type} onSearchChange={v => vm.form.product_type = v} searchPlaceholder={"Введите категорию"} />
+                        <DropdownWithSearch label={"Производитель"} onChange={v => vm.form.manufacturer = v} value={vm.form.manufacturer} isRequired={true} options={vm.getManufacturer()} searchValue={vm.form.manufacturer} onSearchChange={v => vm.form.manufacturer = v} searchPlaceholder={"Введите производителя"} />
+                        <DropdownWithSearch label={"Модель"} onChange={v => vm.form.model = v} value={vm.form.model} options={vm.getModel()} isRequired={true} searchValue={vm.form.model} onSearchChange={v => vm.form.model = v} searchPlaceholder={"Введите модель"} />
+                        <CustomDropdown label={"Единица измерения"} onChange={v => vm.form.measurement_unit = v} value={vm.form.measurement_unit} isRequired={true} options={vm.measurementUnits} />
+                        <LabeledInput label={"Классификация ГОСТ/ТУ"} onChange={v => vm.form.gost_classification = v} value={vm.form.gost_classification} isRequired={false} />
+                        <CustomDropdown label={"Страна происхождения"} onChange={v => vm.form.country_of_origin = v} value={vm.form.country_of_origin} isRequired={true} options={vm.countries_of_origin} />
+                        <CharachteristicsHeader>ХАРАКТЕРИСТИКИ</CharachteristicsHeader>
+                        <Characteristics items={vm.form.characteristics} setItems={v => vm.form.characteristics = v} measurementUnits={vm.measurementUnits} />
+                    </Stack>
+                </Segment>
+                <Segment>
+                    <Stack direction="row" gap={24} justify={"end"}>
+                        <PrimaryButton onClick={onSubmit} type="button">
+                            Проверить и отправить заявку на СТЕ</PrimaryButton>
+                    </Stack>
+                </Segment>
+            </form>
+        </Stack>
     );
 });
 
@@ -273,8 +280,15 @@ const CharachteristicsHeader = styled.h4`
     }
 `;
 
-const Charachteristics = observer(() => {
+interface CharachteristicsProps {
+    readonly items: SkuDto.Characteristic[]
+    setItems: (items: SkuDto.Characteristic[]) => void
+    measurementUnits: string[]
+}
+
+const Characteristics = observer<CharachteristicsProps>(x => {
     const [isOpen, setIsOpen] = useState(false);
+
     const onHandleOpen = () => {
         setIsOpen(true);
         //disable page scrolla
@@ -285,6 +299,7 @@ const Charachteristics = observer(() => {
         setIsOpen(false);
         document.body.style.overflow = "visible";
     };
+
     return (
         <CharachteristicTable>
             <CharachteristicTableHeader>
@@ -295,26 +310,13 @@ const Charachteristics = observer(() => {
                 </tr>
             </CharachteristicTableHeader>
             <tbody>
-                <tr>
-                    <Td>Длина</Td>
-                    <Td>100</Td>
-                    <Td>мм</Td>
-                </tr>
-                <tr>
-                    <Td>Ширина</Td>
-                    <Td>100</Td>
-                    <Td>мм</Td>
-                </tr>
-                <tr>
-                    <Td>Высота</Td>
-                    <Td>100</Td>
-                    <Td>мм</Td>
-                </tr>
-                <tr>
-                    <Td>Вес</Td>
-                    <Td>100</Td>
-                    <Td>кг</Td>
-                </tr>
+                { x.items.map((item, index) => (
+                    <tr key={index}>
+                        <Td>{ item.name }</Td>
+                        <Td>{ item.value }</Td>
+                        <Td>{ item.unit }</Td>
+                    </tr>
+                )) }
             </tbody>
             <Stack direction={"row"} wFull gap={24} style={{ padding: "16px" }}>
                 <GreyButton onClick={onHandleOpen} type={"button"}>Добавить/изменить характеристики</GreyButton>
@@ -323,7 +325,7 @@ const Charachteristics = observer(() => {
                    isOpen={isOpen}
                    contentLabel={"Добавить/изменить характеристику"}>
                 <ModalBody>
-                    <ModalContent onClose={onHandleClose} />
+                    <ModalContent onClose={onHandleClose} items={x.items} onSubmit={x.setItems} measurementUnits={x.measurementUnits} />
                 </ModalBody>
             </Modal>
         </CharachteristicTable>
@@ -333,8 +335,37 @@ const Charachteristics = observer(() => {
 
 interface ModalContentProps {
     onClose: () => void
+    readonly items: SkuDto.Characteristic[]
+    onSubmit: (items: SkuDto.Characteristic[]) => void
+    measurementUnits: string[]
 }
+
 const ModalContent = observer<ModalContentProps>(x => {
+    const [mode, setMode] = useState<"add" | "edit">("edit");
+    const [draft, setDraft] = useState<SkuDto.Characteristic[]>(x.items);
+    const [userCustomCharacteristi, setUserCustomCharacteristi] = useState<SkuDto.Characteristic | null>({ name: "", value: "", unit: "" });
+    const handleChangeMode = (mode: "add" | "edit") => {
+        setMode(mode);
+    };
+
+    const handleCansel = () => {
+        if (mode === "add") {
+            setMode("edit");
+        } else {
+            x.onClose();
+        }
+    };
+
+    const handleAdd = () => {
+        if (mode === "add" && userCustomCharacteristi) {
+            setDraft([...draft, userCustomCharacteristi]);
+            setUserCustomCharacteristi(null);
+            setMode("edit");
+        } else {
+            x.onSubmit(draft);
+            x.onClose();
+        }
+    };
     return (
         <ModalBody>
             <Stack direction={"column"} gap={24}>
@@ -343,17 +374,47 @@ const ModalContent = observer<ModalContentProps>(x => {
                         <Text size={18} weight={700}>Добавить/изменить характеристику</Text>
                     </TableBaseContainer>
                 </TableHeader>
-                <ScrollableContainer>
-                    <Segment>
-                        <CharachteristisModalItem item={{ value: "100", name: "Длина", unit: "мм" }} />
-                        <CharachteristisModalItem item={{ value: "100", name: "Ширина", unit: "мм" }} />
-                        <CharachteristisModalItem item={{ value: "100", name: "Высота", unit: "мм" }} />
-                    </Segment>
-                </ScrollableContainer>
+                {
+                    mode === "add" ? (
+                        <TableBaseContainer style={{ padding: "16px", height: "100%", minHeight: "300px", width: "auto" }}>
+                            <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "24px", width: "100%" }}>
+                                <LabeledInput label={"Наименование"} onChange={v => setUserCustomCharacteristi({ name: v, value: userCustomCharacteristi?.value ?? "", unit: userCustomCharacteristi?.unit ?? "" })}
+                                              value={userCustomCharacteristi?.name ?? ""}
+                                              isRequired={true} />
+                                <DropdownWithSearch searchPlaceholder={"Поиск"} label={"Единица измерения"}
+                                                    onChange={v => setUserCustomCharacteristi({
+                                                        name: userCustomCharacteristi?.name ?? "",
+                                                        value: userCustomCharacteristi?.value ?? "",
+                                                        unit: v
+                                                    })}
+                                                    id={"value"} options={x.measurementUnits} isRequired={true} searchValue={userCustomCharacteristi?.unit ?? ""}
+                                                    onSearchChange={() => {}} />
+                            </div>
+                        </TableBaseContainer>
+                    )
+                        : (
+                            <ScrollableContainer style={{ padding: "16px", height: "100%", minHeight: "300px", width: "auto" }}>
+                                <Stack direction={"column"} gap={24} style={{ width: "max-content" }}>
+                                    <GreyButton type={"button"} onClick={() => handleChangeMode("add")}>
+                                        Добавить характеристику</GreyButton>
+                                </Stack>
+                                { draft.length > 0 ? (
+                                    <Segment>
+                                        { draft.map(item => (
+                                            <CharachteristisModalItem key={item.name} item={item}
+                                                                      itemDelete={i => setDraft(draft.filter(d => d !== i))} onChange={v => setDraft(draft.map(d => d === item ? { ...d, value: v } : d))} />
+                                        )) }
+                                    </Segment>
+                                ) : <Stack wFull hFull justify={"center"} align={"center"} flex={"auto"}><Text>Характеристики отсутствуют</Text></Stack> }
+                            </ScrollableContainer>
+                        )
+                }
+
                 <Stack direction={"row"} wFull gap={24} justify={"end"}>
                     <TableBaseContainer style={{ borderTop: "1px solid #E7EEF7", justifyContent: "end", gap: "24px", padding: "16px" }}>
-                        <CancelButton type={"button"} onClick={x.onClose}>Закрыть</CancelButton>
-                        <PrimaryButton type={"button"}>Добавить</PrimaryButton>
+                        <CancelButton type={"button"} onClick={handleCansel}>{ mode === "add" ? "Отмена" : "Закрыть" }</CancelButton>
+                        <PrimaryButton type={"button"} onClick={handleAdd}>
+                            { mode === "add" ? "Добавить" : "Сохранить" }</PrimaryButton>
                     </TableBaseContainer>
                 </Stack>
             </Stack>
@@ -363,14 +424,16 @@ const ModalContent = observer<ModalContentProps>(x => {
 
 interface CharachteristicModalFormProps {
     item: SkuDto.Characteristic
+    itemDelete: (item: SkuDto.Characteristic) => void
+    onChange: (v: string) => void
 }
 
 const CharachteristisModalItem = observer<CharachteristicModalFormProps>(x => {
     return (
         <Stack direction={"column"} gap={12} style={{ borderBottom: "1px solid #E7EEF7", paddingBottom: "16px", paddingTop: "8px" }}>
-            <LabeledInput label={"Наименование"} onChange={v => console.log(v)} value={x.item.name} isRequired={true} />
+            <LabeledInput label={x.item.name} onChange={x.onChange} value={x.item.value} isRequired={true} />
             <Stack direction={"row"} gap={12} justify={"end"}>
-                <PrimaryButton type={"button"} size={"small"}>Удалить</PrimaryButton>
+                <PrimaryButton type={"button"} size={"small"} onClick={() => x.itemDelete(x.item)}>Удалить</PrimaryButton>
             </Stack>
         </Stack>
     );
@@ -461,4 +524,3 @@ const Td = styled.td`
     padding: .5em .7em;
     background: #fff;
 `;
-

@@ -41,5 +41,19 @@ export const SkuEndpoint = new class {
         const result = await response.json();
         return SkuDto.PredictNameResponse.parse(result).names;
     };
+
+    ///predict_categories/{product_name}
+
+    predictCategory = async (query: string): Promise<SkuDto.PredictedSkuData> => {
+        const response = await fetch(`${baseUrl}/predict_categories/${query}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "accept": "application/json",
+            },
+        });
+        const result = await response.json();
+        return SkuDto.PredictedSkuData.parse(result);
+    };
 };
 
