@@ -77,7 +77,7 @@ export const CustomDropdown = observer<LabeledDropdownProps>(x => {
             </DropdownButton>
             { isOpen && (
                 <Stack direction="column" gap={4} style={{ display: "contents", height: "100px", overflow: "auto" }}>
-                    <OptionsList ref={colapsebleRef}>
+                    <OptionsList>
                         { x.options.map((option, index) => (
                             <Option key={option} onClick={() => handleSelect(option)} aria-selected={option === selectedOption} aria-disabled={x.disabledOptions?.includes(option)} tabIndex={index}>
                                 { option }
@@ -152,13 +152,17 @@ export const DropdownWithSearch = observer((x: DropdownWithSearchProps) => {
             <Label>{ x.label }<Text color={"#B91827"}>{ x.isRequired ? "*" : "" }</Text></Label>
             <Input placeholder={x.searchPlaceholder} value={x.searchValue} onChange={onInputChanged} />
             { isOpen && Boolean(x.options.length) && (
-                <OptionsList>
-                    { abilityOptions.map(option => (
-                        <Option key={option} onClick={e => handleSelect(option, e)} aria-selected={option === selectedOption} aria-disabled={x.disabledOptions?.includes(option)}>
-                            { option }
-                        </Option>
-                    )) }
-                </OptionsList>
+                <Stack direction="column" gap={4} style={{ display: "contents", height: "100px", overflow: "auto" }}>
+                    <OptionsList>
+                        <div className={"scrollable"} style={{ maxHeight: "200px", overflow: "auto" }}>
+                            { abilityOptions.map(option => (
+                                <Option key={option} onClick={e => handleSelect(option, e)} aria-selected={option === selectedOption} aria-disabled={x.disabledOptions?.includes(option)}>
+                                    { option }
+                                </Option>
+                            )) }
+                        </div>
+                    </OptionsList>
+                </Stack>
             ) }
         </CustomDropdownWrapper>
     );
@@ -192,11 +196,12 @@ const DropdownButton = styled.button`
 
 const OptionsList = styled.div`
     position: absolute;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    width: 100%;
     top: 68px;
-    height: max-content;
+    max-height: 200px;
+    overflow: auto;
     z-index: 1000;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border: 1px solid #e7eef7;
@@ -205,11 +210,10 @@ const OptionsList = styled.div`
 
 const Option = styled.div<{ ["aria-selected"]?: boolean; ["aria-disabled"]?: boolean }>`
     background: #fafafa;
-    height: 42px;
     display: flex;
     align-items: center;
     border-bottom: 1px solid #edf0f3;
-    padding: 0 16px;
+    padding: 10px 14px;
     
     &[aria-selected="true"] {
         background: #f0f0f0;

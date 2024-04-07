@@ -13,23 +13,21 @@ export class CreateSkuFormViewModel {
     #init = async () => {
         this.isLoading = true;
         await Promise.all([
-            this.#requestManufacturers(),
             this.#requestMeasurementUnits(),
             this.#requestCountriesOfOrigin(),
-            this.#requestProductTypes()
         ]);
         this.isLoading = false;
     };
 
     public form: SkuDto.Form = {
         image: "",
-        product_type: "Не выбрано",
+        product_type: "",
         name: "",
         model: "",
-        manufacturer: "Не выбрано",
-        measurement_unit: "Не выбрано",
+        manufacturer: "",
+        measurement_unit: "Штука",
         gost_classification: "",
-        country_of_origin: "Не выбрано",
+        country_of_origin: "",
         characteristics: []
     };
 
@@ -86,16 +84,12 @@ export class CreateSkuFormViewModel {
         });
     };
 
-    #requestManufacturers = async () => {
-        this.manufacturers = ["ООО Стройкомплект", "ООО ЯрБетон", "ООО Потребительский кооператив"];
-    };
-
     #requestMeasurementUnits = async () => {
-        this.measurementUnits = ["шт", "кг", "л", "м", "м2", "м3"];
+        this.measurementUnits = ["Штука", "Метр", "Литр; кубический дециметр", "Грамм", "Килограмм", "Тонна; метрическая тонна (1000 кг)", "Ватт", "Герц", "Ом", "Час", "Сутки", "Лист", "Сантиметр", "Секунда", "Упаковка", "Дюжина упаковок", "Сто упаковок", "Минута", "Дециметр", "Сто листов"];
     };
 
     #requestCountriesOfOrigin = async () => {
-        this.countries_of_origin = ["Россия", "Китай", "Германия"];
+        this.countries_of_origin = ["Абхазия", "Россия", "Казахстан", "Украина", "Беларусь", "Армения", "Азербайджан", "Грузия", "Туркменистан", "Узбекистан", "Таджикистан", "Киргизия", "Молдова", "Латвия", "Литва", "Эстония", "Германия", "Франция", "Италия", "Испания", "Португалия", "Великобритания", "Ирландия", "Норвегия", "Швеция", "Финляндия", "Дания", "Польша", "Чехия", "Словакия", "Венгрия", "Румыния", "Болгария", "Словения", "Хорватия", "Босния и Герцеговина", "Сербия", "Черногория", "Македония", "Греция", "Турция", "Кипр", "Мальта", "Албания", "Марокко", "Тунис", "Египет", "Израиль", "Иордания", "Ливан", "Сирия", "Ирак", "Иран", "Саудовская Аравия", "Йемен", "ОАЭ", "Катар", "Оман", "Кувейт", "Бахрейн", "Афганистан", "Пакистан", "Индия", "Непал", "Бангладеш", "Шри-Ланка", "Мьянма", "Таиланд", "Камбоджа", "Вьетнам", "Лаос", "Малайзия", "Индонезия", "Филиппины", "Сингапур", "Бруней", "Тимор-Лешти", "Китай"];
     };
 
     #requestProductTypes = async () => {
@@ -108,13 +102,49 @@ export class CreateSkuFormViewModel {
     }); // Установите нужную задержку в миллисекундах
 
     predictNames: string[] = [];
+    predictedCategory: SkuDto.PredictedSkuData = {
+        categories: []
+    };
 
     #sendNameToBackend = async () => {
         if (!this.form.name.trim().length) {
             this.predictNames = [];
             return;
         }
-        this.predictNames = await SkuEndpoint.predictNames(this.form.name.toLowerCase());
+        try {
+            this.predictNames = await SkuEndpoint.predictNames(this.form.name.toLowerCase());
+        } catch (e) {
+            console.error(e);
+            this.predictNames = [];
+        }
+        this.predictedCategory = await SkuEndpoint.predictCategory(this.form.name.toLowerCase());
     };
 
+    getCategoryPredictions = () => {
+        return this.predictedCategory.categories.map(x => x.category_name).filter((value, index, self) => self.indexOf(value) === index);
+    };
+
+    getModelPredictions = () => {
+        return this.predictedCategory.categories.map(x => x.model);
+    };
+
+    getManufacturerPredictions = () => {
+        return this.predictedCategory.categories.map(x => x.manufacturer);
+    };
+
+    getCategory = () => {
+        //depends on selected category
+        return this.predictedCategory.categories.filter(item => item.category_name === this.form.product_type).map(x => x.manufacturer);
+    };
+
+    getManufacturer = () => {
+        //depends on selected category
+        //delete duplicates
+        return this.predictedCategory.categories.filter(item => item.category_name === this.form.product_type).map(x => x.manufacturer).filter((value, index, self) => self.indexOf(value) === index);
+
+    };
+
+    getModel = () => {
+        return this.predictedCategory.categories.filter(item => item.category_name === this.form.product_type).filter(x => x.manufacturer === this.form.manufacturer).map(x => x.model).filter((value, index, self) => self.indexOf(value) === index);
+    };
 }
