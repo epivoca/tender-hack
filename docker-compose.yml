@@ -6,3 +6,21 @@ services:
     restart: always
     ports:
       - "27017:27017"
+  cte_storage:
+    image: postgres
+    restart: always
+    healthcheck:
+      test: pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+      - ./sql/csv_train_with_index.csv:/docker-entrypoint-initdb.d/csv_train_with_index.csv
+      - ./sql/init_db.sql:/docker-entrypoint-initdb.d/00-init_schema.sql
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "127.0.0.1:${DB_EXTERNAL_PORT}:5432"
