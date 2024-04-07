@@ -28,6 +28,9 @@ body {
   place-items: center;
   width: 100%;
   min-height: 100vh;
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
+  scrollbar-color: rgba(0,0,0,.25) rgba(0,0,0,.1);
 }
 
 /*h1 {*/

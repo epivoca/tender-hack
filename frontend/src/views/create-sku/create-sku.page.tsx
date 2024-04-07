@@ -5,15 +5,13 @@ import { Text } from "components/text.component.tsx";
 import { RadioCheckbox } from "components/ui/RadioCheckbox.tsx";
 import { Content } from "components/ui/header.tsx";
 import { Segment } from "components/ui/segment.tsx";
-import { SkuForm } from "views/create-sku/creatte-sku.form.tsx";
+import { SkuForm } from "views/create-sku/create-sku.form.tsx";
 
 export const CreateSkuPage: React.FC = observer(() => {
     return (
         <Content>
             <CreateSkuPageContainer>
-                <Segment>
-                    <SkuForm />
-                </Segment>
+                <SkuForm />
                 <Stack direction="column" gap={24}>
                     <Text size={24} weight={700}>Похожие СТЕ</Text>
                 </Stack>

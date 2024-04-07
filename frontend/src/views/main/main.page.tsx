@@ -29,7 +29,7 @@ export const MainPage = observer(() => {
                         ) : (
                             <>
                                 <Stack align={"center"} justify={"space-between"} gap={24} wFull>
-                                    <Text size={24} weight={700}>Каталог товаров</Text>
+                                    <Text size={24} weight={700}>Каталог продукции</Text>
                                     <PrimaryButton onClick={() => navigate("/sku-change-request/new")}>
                                         Добавить СТЕ</PrimaryButton>
                                 </Stack><SteGrid>
@@ -40,7 +40,7 @@ export const MainPage = observer(() => {
                                 {
                                     vm.skuList.length === 0 && !vm.isLoading && (
                                         <Stack align={"center"} justify={"center"} gap={24} wFull hFull style={{ marginTop: "100px" }}>
-                                            <Text opacity={0.4} size={16} weight={500}>СТЕ отсутствуют! Станьте первым!</Text>
+                                            <Text opacity={0.4} size={16} weight={500}>СТЕ отсутствуют!</Text>
                                         </Stack>
                                     )
                                 }
@@ -80,9 +80,13 @@ const SteItemCard = observer((x: SkuItem) => {
     const navigate = useNavigate();
     const ref = useCollapsible(isAdditionsOpen);
     const onClick = () => {
-        // navigate("/sku/view/1");
+        navigate(`/sku/${x._id}`);
     };
 
+    const onHandleCollapsible = (e: React.MouseEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        setIsAdditionsOpen(!isAdditionsOpen);
+    };
     return (
         <SteItemCardContainer onClick={onClick}>
             <Stack direction={"column"} gap={8}>
@@ -102,7 +106,7 @@ const SteItemCard = observer((x: SkuItem) => {
                         <Text size={14} color={"#9B9B9B"}>{ c.value }</Text>
                     </Stack>
                 )) }
-                <ContentWrapper ref={ref}>
+                <ContentWrapper ref={ref} onClick={onHandleCollapsible}>
                     { x.characteristics.slice(5).map((c, i) => (
                         <Stack key={i} direction={"row"} gap={4} $wrap={"wrap"}>
                             <Text size={14} weight={500} color={"#7e7e7e"}>{ c.name }:</Text>
