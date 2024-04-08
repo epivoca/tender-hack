@@ -49,14 +49,29 @@ export namespace SkuDto {
 
     export type PredictNameResponse = z.infer<typeof PredictNameResponse>;
 
+    export const CropCharacteristics = z.object({
+        key: z.string(),
+        value: z.string(),
+    });
+
+    export type CropCharacteristics = z.infer<typeof CropCharacteristics>;
+
     export const PredictedSkuData = z.object({
         categories: z.array(z.object({
             category_name: z.string(), // (string)
             model: z.string(), // (string)
             manufacturer: z.string(), // (string)
+            characteristics: z.array(CropCharacteristics), // (array)
         })),
     });
 
     export type PredictedSkuData = z.infer<typeof PredictedSkuData>;
-}
 
+    export const covertStringToCharacteristic = (item: CropCharacteristics): Characteristic => {
+        return {
+            name: item.key,
+            value: item.value,
+            unit: "-",
+        };
+    };
+}

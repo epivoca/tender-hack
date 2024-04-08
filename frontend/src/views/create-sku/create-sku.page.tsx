@@ -23,20 +23,24 @@ export const CreateSkuPage: React.FC = observer(() => {
                 { /*    Инструкция по созданию оферты и СТЕ находится по ссылке<br />*/ }
                 { /*    В случае утверждения заявки, вы сможете подписать и разместить оферту.</Warncontainer>*/ }
                 <SkuForm />
-                <Stack direction="column" gap={24}>
-                    <Text size={24} weight={700}>Похожие СТЕ</Text>
-                    <Stack direction="column" gap={16} style={{ width: "100%" }}>
-                        <Warncontainer>Отображение похожих СТЕ временно недоступно.<br />Мы работает над решением этой проблемы!</Warncontainer>
-                    </Stack>
-                </Stack>
+                { /*<Stack direction="column" gap={24}>*/ }
+                { /*    <Text size={24} weight={700}>Похожие СТЕ</Text>*/ }
+                { /*    <Stack direction="column" gap={16} style={{ width: "100%" }}>*/ }
+                { /*        <Warncontainer>Отображение похожих СТЕ временно недоступно.<br />Мы работает над решением этой проблемы!</Warncontainer>*/ }
+                { /*    </Stack>*/ }
+                { /*</Stack>*/ }
             </CreateSkuPageContainer>
         </Content>
     );
 });
 
 const CreateSkuPageContainer = styled.div`
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    //display: grid;
+    //grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
     grid-gap: 24px;
     padding: 24px;
     width: 100%;

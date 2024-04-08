@@ -2,14 +2,13 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
-import { redirect, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { SkuDto } from "api/models/sku.model.ts";
 import { Stack } from "components/stack.components.tsx";
 import { Text } from "components/text.component.tsx";
 import { CancelButton, GreyButton, PrimaryButton } from "components/ui/button.tsx";
 import { CustomDropdown, DropdownWithSearch } from "components/ui/dropdown.tsx";
 import { Segment } from "components/ui/segment";
-import { Warncontainer } from "components/warn.components.tsx";
 import { CreateSkuFormViewModel } from "views/create-sku/create-sku.form.vm.ts";
 
 export const SkuForm = observer(() => {
@@ -20,9 +19,17 @@ export const SkuForm = observer(() => {
         void vm.submitForm();
         navigator("/");
     };
+
+    const generateCharacteristics = () => {
+        const selected = vm.predictedCategory.categories.find(c => c.model === vm.form.model);
+        for (const characteristic of selected?.characteristics ?? []) {
+            vm.form.characteristics.push({ name: characteristic.key, value: characteristic.value, unit: "-" });
+        }
+    };
+
     return (
         <Stack direction="column" gap={24}>
-            <form style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", gap: "24px" }}>
+            <form style={{ width: "1000px", height: "100%", display: "flex", flexDirection: "column", gap: "24px" }}>
                 <Segment>
                     <Stack direction="column" gap={24}>
                         <Text size={24} weight={700}>Создание нового СТЕ</Text>
@@ -46,6 +53,9 @@ export const SkuForm = observer(() => {
                         <LabeledInput label={"Классификация ГОСТ/ТУ"} onChange={v => vm.form.gost_classification = v} value={vm.form.gost_classification} isRequired={false} />
                         <CustomDropdown label={"Страна происхождения"} onChange={v => vm.form.country_of_origin = v} value={vm.form.country_of_origin} isRequired={true} options={vm.countries_of_origin} />
                         <CharachteristicsHeader>ХАРАКТЕРИСТИКИ</CharachteristicsHeader>
+                        <Stack direction="row" gap={24} justify={"end"}>
+                            <GreyButton type={"button"} onClick={generateCharacteristics}>Сгенерировать</GreyButton>
+                        </Stack>
                         <Characteristics items={vm.form.characteristics} setItems={v => vm.form.characteristics = v} measurementUnits={vm.measurementUnits} />
                     </Stack>
                 </Segment>
@@ -306,7 +316,7 @@ const Characteristics = observer<CharachteristicsProps>(x => {
                 <tr>
                     <Th>Наименование</Th>
                     <Th>Значение</Th>
-                    <Th>Единица измерения</Th>
+                    { /*<Th>Единица измерения</Th>*/ }
                 </tr>
             </CharachteristicTableHeader>
             <tbody>
@@ -314,7 +324,7 @@ const Characteristics = observer<CharachteristicsProps>(x => {
                     <tr key={index}>
                         <Td>{ item.name }</Td>
                         <Td>{ item.value }</Td>
-                        <Td>{ item.unit }</Td>
+                        { /*<Td>{ item.unit }</Td>*/ }
                     </tr>
                 )) }
             </tbody>

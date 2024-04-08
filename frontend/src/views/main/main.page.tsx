@@ -88,7 +88,7 @@ const SteItemCard = observer((x: SkuItem) => {
         setIsAdditionsOpen(!isAdditionsOpen);
     };
     return (
-        <SteItemCardContainer onClick={onClick}>
+        <SteItemCardContainer>
             <Stack direction={"column"} gap={8}>
                 <SteItemCardImage src={x.image} alt={x.name} />
                 <Text size={16} weight={600}>{ x.name }</Text>

@@ -26,7 +26,7 @@ const Header = observer(() => {
                                 <VerticalDivider />
                                 <Stack justify={"center"} gap={24}>
                                     <Stack direction={"column"} justify={"center"}>
-                                        <Text weight={600} font-size={14}>Лежнев Александр</Text>
+                                        <Text weight={600} font-size={14}>Павлов Александр</Text>
                                         <Text size={12} color={"#9B9B9B"}>Поставщик</Text>
                                     </Stack>
                                     <Svg src={userIcon} fill={"#264b82"} width={48} height={48} />
